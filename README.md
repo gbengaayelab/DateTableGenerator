@@ -38,7 +38,7 @@ in
 
 Feel free to customize the script to fit your specific requirements. You can modify the date attributes, add additional columns, or incorporate data from external sources to enhance the Date table functionality.
 
-### This M-Query was inspired by Kevin Knight
+## This M-Query was inspired by Kevin Knight. I have since optimized this code, added the also the Holiday header as part of built-in intelligence to this Dimension Table. Feel free to also modify this code and include your customizations
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
