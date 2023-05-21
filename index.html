@@ -8,8 +8,39 @@
         <pre>
 
 // Start Copying from here                
+// Modify the Date to suite your actual data point. You can also add as many National holidays specific to your Country in the NationalHolidays code block. As an example below, my data date points are between year 2014-2023            
 let
     NationalHolidays = Table.FromRecords({
+        [Date = #date(2013, 1, 1), Holiday = "New Year's Day"],
+        [Date = #date(2013, 4, 14), Holiday = "Good Friday"],
+        [Date = #date(2013, 4, 17), Holiday = "Easter Monday"],
+        [Date = #date(2014, 1, 1), Holiday = "New Year's Day"],
+        [Date = #date(2014, 4, 14), Holiday = "Good Friday"],
+        [Date = #date(2014, 4, 17), Holiday = "Easter Monday"],
+        [Date = #date(2015, 1, 1), Holiday = "New Year's Day"],
+        [Date = #date(2015, 4, 14), Holiday = "Good Friday"],
+        [Date = #date(2015, 4, 17), Holiday = "Easter Monday"],
+        [Date = #date(2016, 1, 1), Holiday = "New Year's Day"],
+        [Date = #date(2016, 4, 14), Holiday = "Good Friday"],
+        [Date = #date(2016, 4, 17), Holiday = "Easter Monday"],
+        [Date = #date(2017, 1, 1), Holiday = "New Year's Day"],
+        [Date = #date(2017, 4, 14), Holiday = "Good Friday"],
+        [Date = #date(2017, 4, 17), Holiday = "Easter Monday"],
+        [Date = #date(2018, 1, 1), Holiday = "New Year's Day"],
+        [Date = #date(2018, 4, 14), Holiday = "Good Friday"],
+        [Date = #date(2018, 4, 17), Holiday = "Easter Monday"],
+        [Date = #date(2019, 1, 1), Holiday = "New Year's Day"],
+        [Date = #date(2019, 4, 14), Holiday = "Good Friday"],
+        [Date = #date(2019, 4, 17), Holiday = "Easter Monday"],
+        [Date = #date(2020, 1, 1), Holiday = "New Year's Day"],
+        [Date = #date(2020, 4, 14), Holiday = "Good Friday"],
+        [Date = #date(2020, 4, 17), Holiday = "Easter Monday"],
+        [Date = #date(2021, 1, 1), Holiday = "New Year's Day"],
+        [Date = #date(2021, 4, 14), Holiday = "Good Friday"],
+        [Date = #date(2021, 4, 17), Holiday = "Easter Monday"],
+        [Date = #date(2022, 1, 1), Holiday = "New Year's Day"],
+        [Date = #date(2022, 4, 14), Holiday = "Good Friday"],
+        [Date = #date(2022, 4, 17), Holiday = "Easter Monday"],
         [Date = #date(2023, 1, 1), Holiday = "New Year's Day"],
         [Date = #date(2023, 4, 14), Holiday = "Good Friday"],
         [Date = #date(2023, 4, 17), Holiday = "Easter Monday"],
@@ -18,51 +49,59 @@ let
         [Date = #date(2023, 8, 28), Holiday = "Summer Bank Holiday"],
         [Date = #date(2023, 12, 25), Holiday = "Christmas Day"],
         [Date = #date(2023, 12, 26), Holiday = "Boxing Day"]
-    }),
+        }),
+        DateQuery = (StartDate as date, EndDate as date) =>
 
-    DateQuery = (StartDate as date, EndDate as date) =>
+    let
+        // Capture the date range from the parameters
+        StartYear = Date.Year(StartDate),
+        EndYear = Date.Year(EndDate),
 
-        let
-            // Capture the date range from the parameters
-            StartDateValue = #date(Date.Year(StartDate), Date.Month(StartDate), Date.Day(StartDate)),
-            EndDateValue = #date(Date.Year(EndDate), Date.Month(EndDate), Date.Day(EndDate)),
+        // Get the distinct years within the date range
+        YearList = {StartYear..EndYear},
 
-            // Get the number of dates that will be required for the table
-            GetDateCount = Duration.Days(EndDateValue - StartDateValue),
+        // Filter the National Holidays based on the distinct years
+        FilteredHolidays = Table.SelectRows(NationalHolidays, each List.Contains(YearList, Date.Year([Date]))),
 
-            // Take the count of dates and turn it into a list of dates
-            GetDateList = List.Dates(StartDateValue, GetDateCount, #duration(1, 0, 0, 0)),
+        // Capture the date range within the distinct years
+        StartDateValue = #date(StartYear, Date.Month(StartDate), Date.Day(StartDate)),
+        EndDateValue = #date(EndYear, Date.Month(EndDate), Date.Day(EndDate)),
 
-            // Convert the list into a table
-            DateListToTable = Table.FromList(GetDateList, Splitter.SplitByNothing(), {"Date"}, null, ExtraValues.Error),
+        // Get the number of dates that will be required for the table
+        GetDateCount = Duration.Days(EndDateValue - StartDateValue),
 
-            // Create various date attributes from the date column
-            // Add Year Column
-            AddYear = Table.AddColumn(DateListToTable, "Year", each Date.Year([Date])),
+        // Take the count of dates and turn it into a list of dates
+        GetDateList = List.Dates(StartDateValue, GetDateCount, #duration(1, 0, 0, 0)),
 
-            // Add Quarter Column
-            AddQuarter = Table.AddColumn(AddYear, "Quarter", each "Q" & Number.ToText(Date.QuarterOfYear([Date]))),
+        // Convert the list into a table
+        DateListToTable = Table.FromList(GetDateList, Splitter.SplitByNothing(), {"Date"}, null, ExtraValues.Error),
 
-            // Add Week Number Column
-            AddWeekNumber = Table.AddColumn(AddQuarter, "Week Number", each Date.WeekOfYear([Date])),
+        // Create various date attributes from the date column
+        // Add Year Column
+        AddYear = Table.AddColumn(DateListToTable, "Year", each Date.Year([Date])),
 
-            // Add Month Number Column
-            AddMonthNumber = Table.AddColumn(AddWeekNumber, "Month Number", each Date.Month([Date])),
+        // Add Quarter Column
+        AddQuarter = Table.AddColumn(AddYear, "Quarter", each "Q" & Number.ToText(Date.QuarterOfYear([Date]))),
 
-            // Add Month Name Column
-            AddMonthName = Table.AddColumn(AddMonthNumber, "Month", each Date.ToText([Date], "MMMM")),
+        // Add Week Number Column
+        AddWeekNumber = Table.AddColumn(AddQuarter, "Week Number", each Date.WeekOfYear([Date])),
 
-            // Add Day of Week Column
-            AddDayOfWeek = Table.AddColumn(AddMonthName, "Day of Week", each Date.ToText([Date], "dddd")),
+        // Add Month Number Column
+        AddMonthNumber = Table.AddColumn(AddWeekNumber, "Month Number", each Date.Month([Date])),
 
-            // Add National Holiday Column
-            AddNationalHoliday = Table.AddColumn(AddDayOfWeek, "National Holiday", each
-                if List.Contains(NationalHolidays[Date], [Date]) then "Yes" else "No")
-        in
-            AddNationalHoliday
-in
-    DateQuery
+        // Add Month Name Column
+        AddMonthName = Table.AddColumn(AddMonthNumber, "Month", each Date.ToText([Date], "MMMM")),
 
+        // Add Day of Week Column
+        AddDayOfWeek = Table.AddColumn(AddMonthName, "Day of Week", each Date.ToText([Date], "dddd")),
+
+        // Add National Holiday Column
+        AddNationalHoliday = Table.AddColumn(AddDayOfWeek, "National Holiday", each
+            if List.Contains(FilteredHolidays[Date], [Date]) then "Yes" else "No")
+    in
+        AddNationalHoliday
+    in
+DateQuery
     // Stop copying here
         </pre>
     </div>

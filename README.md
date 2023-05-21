@@ -35,10 +35,11 @@ in
 9. Close the Power Query Editor, and the Date table will be available in your Power BI report.
 
 ### Customization
-
+Modify the Date to suite your actual data point. You can also add as many National holidays specific to your Country in the NationalHolidays code block. As an example below, my data date points are between year 2013-2023  
 Feel free to customize the script to fit your specific requirements. You can modify the date attributes, add additional columns, or incorporate data from external sources to enhance the Date table functionality.
 
-## This M-Query was inspired by Kevin Knight. I have since optimized this code, added the also the Holiday header as part of built-in intelligence to this Dimension Table. Feel free to also modify this code and include your customizations
+###
+This M-Query was inspired by Kevin Knight. I have since optimized this code, added the also the Holiday header as part of built-in intelligence to this Dimension Table. Feel free to also modify this code and include your customizations
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
