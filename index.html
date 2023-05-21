@@ -6,6 +6,8 @@
 <body>
     <div>
         <pre>
+
+// Start Copying from here                
 (StartDate as date, EndDate as date) =>
 
 let
@@ -46,6 +48,8 @@ let
         if Date.IsInHoliday(#date(Date.Year([Date]), Date.Month([Date]), Date.Day([Date])), "en-GB") then "Yes" else "No")
 in
     AddNationalHoliday
+
+    // Stop copying here
         </pre>
     </div>
 </body>
